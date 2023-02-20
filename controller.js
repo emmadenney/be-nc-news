@@ -7,7 +7,6 @@ exports.getTopics = (request, response, next) => {
       response.send({ topics });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };
