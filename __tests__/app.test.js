@@ -35,7 +35,7 @@ describe("/api/topics", () => {
 });
 
 describe("/api/articles", () => {
-  test.skip("200 - GET: responds with an array of article objects", () => {
+  test.only("200 - GET: responds with an array of article objects", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -49,12 +49,13 @@ describe("/api/articles", () => {
             title: expect.any(String),
             article_id: expect.any(Number),
             topic: expect.any(String),
-            created_at: expect.any(Number),
+            created_at: expect.any(String),
             votes: expect.any(Number),
             article_img_url: expect.any(String),
             comment_count: expect.any(Number),
           });
         });
+        expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
 });
