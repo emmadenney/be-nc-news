@@ -18,7 +18,7 @@ afterAll(() => {
 });
 
 describe("/api/topics", () => {
-  test.skip("200 - GET: responds with an array of topic objects", () => {
+  test("200 - GET: responds with an array of topic objects", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
