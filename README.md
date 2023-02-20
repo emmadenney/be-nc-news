@@ -1,4 +1,4 @@
-Add the following files in order to work with this repo
+Add the following files to the main project directory in order to work with this repo
 
 .env.test
 .env.development
