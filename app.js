@@ -1,7 +1,7 @@
 const db = require("./db/connection");
 const express = require("express");
 const app = express();
-const { errorHandler500 } = require("./error-handling-controller.js");
+const { errorHandler500 } = require("./error-handling.js");
 const { getTopics, getArticles } = require("./controller");
 
 app.get("/api/topics", getTopics);
