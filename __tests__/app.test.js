@@ -33,3 +33,15 @@ describe("/api/topics", () => {
       });
   });
 });
+
+describe("/api/articles/:article_id", () => {
+  test("200 - GET: responds with the appropriate article object using article_id", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article.article_id).toBe(2);
+      });
+  });
+});
