@@ -35,4 +35,13 @@ exports.getArticleById = (request, response, next) => {
     });
 };
 
-// exports.postComment;
+exports.postComment = (request, response, next) => {
+  console.log("hi!");
+  const { article_id } = request.params;
+  const { username, body } = request.body;
+  console.log(username, body);
+
+  insertComment(username, body).then((newComment) => {
+    response.status(201).send({ comment: newComment });
+  });
+};

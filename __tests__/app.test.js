@@ -103,13 +103,12 @@ describe("/api/articles/:article_id", () => {
 
 describe("POST /api/articles/:article_id/comments", () => {
   test.skip("201 - POST: responds with posted comment when request contains an object of username and body", () => {
-    const postObject = {
-      username: "somedude27",
-      body: "Live long and prosper",
-    };
     return request(app)
       .post("/api/articles/:article_id/comments")
-      .send(postObject)
+      .send({
+        username: "somedude27",
+        body: "Live long and prosper",
+      })
       .expect(201)
       .then(({ body }) => {
         const { comment } = body;
