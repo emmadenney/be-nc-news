@@ -1,5 +1,10 @@
 const db = require("./db/connection");
-const { selectTopics, selectArticles, selectArticleById } = require("./models");
+const {
+  selectTopics,
+  selectArticles,
+  selectArticleById,
+  insertComment,
+} = require("./models");
 
 exports.getTopics = (request, response, next) => {
   selectTopics()
@@ -36,12 +41,14 @@ exports.getArticleById = (request, response, next) => {
 };
 
 exports.postComment = (request, response, next) => {
-  console.log("hi!");
   const { article_id } = request.params;
-  const { username, body } = request.body;
-  console.log(username, body);
+  const commentToPost = request.body;
 
-  insertComment(username, body).then((newComment) => {
-    response.status(201).send({ comment: newComment });
-  });
+  insertComment(article_id, commentToPost)
+    .then((newComment) => {
+      response.status(201).send({ comment: newComment });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

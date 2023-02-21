@@ -28,3 +28,21 @@ exports.selectArticleById = (article_id) => {
       return result.rows;
     });
 };
+
+exports.insertComment = (article_id, commentToPost) => {
+  const { username, body } = commentToPost;
+  console.log(username, body);
+
+  return db
+    .query(
+      `INSERT INTO comments
+      (body, article_id, author, votes)
+      VALUES
+      ($1, $2, $3, 0) RETURNING *;`,
+      [body, article_id, username]
+    )
+    .then((result) => {
+      console.log(result.rows);
+      return result.rows[0];
+    });
+};

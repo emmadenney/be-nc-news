@@ -19,7 +19,7 @@ app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticleById);
 
-// app.post("/api/articles/:article_id/comments", postComment);
+app.post("/api/articles/:article_id/comments", postComment);
 
 app.use(errorHandlerPSQL400);
 app.use(errorHandler404);

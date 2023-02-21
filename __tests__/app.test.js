@@ -111,6 +111,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       })
       .expect(201)
       .then(({ body }) => {
+        console.log(body);
         const { comment } = body;
         expect(comment).toMatchObject({
           comment_id: expect.any(Number),
