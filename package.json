@@ -31,10 +31,12 @@
   },
   "jest": {
     "setupFilesAfterEnv": [
-      "jest-extended/all"
+      "jest-extended/all",
+      "jest-sorted"
     ]
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "jest-sorted": "^1.0.14"
   }
 }
