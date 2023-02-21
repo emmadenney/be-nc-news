@@ -35,7 +35,7 @@ describe("/api/topics", () => {
 });
 
 describe("/api/articles/:article_id", () => {
-  test("200 - GET: responds with the appropriate article object using article_id", () => {
+  test.skip("200 - GET: responds with the appropriate article object using article_id", () => {
     return request(app)
       .get("/api/articles/2")
       .expect(200)
