@@ -35,7 +35,7 @@ describe("/api/topics", () => {
 });
 
 describe("/api/articles", () => {
-  test.only("200 - GET: responds with an array of article objects", () => {
+  test("200 - GET: responds with an array of article objects", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
