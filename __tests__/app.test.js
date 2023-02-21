@@ -17,8 +17,6 @@ afterAll(() => {
   return db.end();
 });
 
-describe("universal errors", () => {});
-
 describe("/api/topics", () => {
   test("200 - GET: responds with an array of topic objects", () => {
     return request(app)
@@ -98,6 +96,7 @@ describe("/api/articles/:article_id", () => {
       .get("/api/articles/not-a-valid-path-because-not-a-number")
       .expect(400)
       .then(({ body }) => {
+        console.log(body);
         expect(body.msg).toBe("Invalid path!");
       });
   });
