@@ -42,9 +42,13 @@ exports.getArticleById = (request, response, next) => {
 
 exports.getComments = (request, response, next) => {
   const { article_id } = request.params;
-  selectCommentsByArticleId(article_id)
-    .then((comments) => {
-      if (comments.length === 0) {
+
+  const articleIdCheck = selectArticleById(article_id);
+  const selectComments = selectCommentsByArticleId(article_id);
+
+  Promise.all([articleIdCheck, selectComments])
+    .then(([article, comments]) => {
+      if (article.length === 0) {
         return Promise.reject({ status: 404, msg: "Path not found!" });
       }
       response.status(200).send({ comments });
