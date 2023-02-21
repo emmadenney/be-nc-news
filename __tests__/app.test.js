@@ -100,3 +100,54 @@ describe("/api/articles/:article_id", () => {
       });
   });
 });
+
+describe("/api/articles/:article_id/comments", () => {
+  test("200 - GET: responds with an array of comments for given article_id", () => {
+    return request(app)
+      .get("/api/articles/3/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toBeInstanceOf(Array);
+        expect(comments).toHaveLength(2);
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: expect.any(Number),
+          });
+        });
+        expect(comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("404: responds with a message 'Path not found' when path is valid but does not exist", () => {
+    return request(app)
+      .get("/api/articles/49/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Path not found!");
+      });
+  });
+  test.skip("200: responds with an empty array if ID exists but has no comments", () => {
+    return request(app)
+      .get("/api/articles/4/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toBeInstanceOf(Array);
+        expect(comments).toHaveLength(0);
+      });
+  });
+  // test.only("400: responds with a message 'Invalid path' when path is invalid", () => {
+  //   return request(app)
+  //     .get("/api/articles/not-a-valid-path-because-not-a-number/123")
+  //     .expect(400)
+  //     .then(({ body }) => {
+  //       console.log(body);
+  //       expect(body.msg).toBe("Invalid path!");
+  //     });
+  // });
+});
