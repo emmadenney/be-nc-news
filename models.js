@@ -42,7 +42,6 @@ exports.selectCommentsByArticleId = (article_id) => {
 
 exports.insertComment = (article_id, commentToPost) => {
   const { username, body } = commentToPost;
-  console.log(username, body);
 
   return db
     .query(
@@ -53,7 +52,6 @@ exports.insertComment = (article_id, commentToPost) => {
       [body, article_id, username]
     )
     .then((result) => {
-      console.log(result.rows);
-      return result.rows[0];
+      return result.rows;
     });
 };

@@ -63,7 +63,19 @@ exports.postComment = (request, response, next) => {
   const { article_id } = request.params;
   const commentToPost = request.body;
 
-  insertComment(article_id, commentToPost).then((newComment) => {
-    response.status(201).send({ comment: newComment });
-  });
+  const articleIdCheck = selectArticleById(article_id);
+  const insertedComment = insertComment(article_id, commentToPost);
+
+  Promise.all([articleIdCheck, insertedComment])
+    .then(([article, newComment]) => {
+      if (article.length === 0) {
+        return Promise.reject({ status: 404, msg: "Path not found!" });
+      } else if (newComment.length === 0) {
+        return Promise.reject({ status: 404, msg: "User not found" });
+      }
+      response.status(201).send({ comment: newComment });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

@@ -9,10 +9,21 @@ exports.errorHandlerPSQL400 = (err, request, response, next) => {
 };
 
 exports.errorHandler500 = (err, request, response, next) => {
-  console.log(err);
   response.status(500).send({ msg: "Server error" });
 };
 
 exports.errorHandler404 = (err, request, response, next) => {
-  response.status(404).send({ msg: "Path not found!" });
+  if (err.msg === "Path not found!") {
+    response.status(404).send({ msg: "Path not found!" });
+  } else {
+    next(err);
+  }
+};
+
+exports.errorHandlerPSQL404 = (err, request, response, next) => {
+  if (err.code === "23503") {
+    response.status(404).send({ msg: "User not found" });
+  } else {
+    next(err);
+  }
 };

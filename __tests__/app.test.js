@@ -153,25 +153,66 @@ describe("GET /api/articles/:article_id/comments", () => {
 });
 
 describe("POST /api/articles/:article_id/comments", () => {
-  test.skip("201 - POST: responds with posted comment when request contains an object of username and body", () => {
+  test("201 - POST: responds with posted comment when request contains an object of username and body", () => {
+    const commentToPost = {
+      username: "butter_bridge",
+      body: "Live long and prosper",
+    };
     return request(app)
-      .post("/api/articles/:article_id/comments")
-      .send({
-        username: "somedude27",
-        body: "Live long and prosper",
-      })
+      .post("/api/articles/3/comments")
+      .send(commentToPost)
       .expect(201)
       .then(({ body }) => {
-        console.log(body);
         const { comment } = body;
-        expect(comment).toMatchObject({
-          comment_id: expect.any(Number),
-          body: postObject.body,
-          article_id: expect.any(Number),
-          author: expect.any(String),
-          votes: expect.any(Number),
-          created_at: expect.any(Number),
-        });
+        expect(comment).toMatchObject([
+          {
+            comment_id: expect.any(Number),
+            body: "Live long and prosper",
+            article_id: expect.any(Number),
+            author: "butter_bridge",
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+          },
+        ]);
+      });
+  });
+  test("404: responds with a message 'Path not found' when article_id path is valid but does not exist", () => {
+    const commentToPost = {
+      username: "butter_bridge",
+      body: "Live long and prosper",
+    };
+    return request(app)
+      .post("/api/articles/49/comments")
+      .send(commentToPost)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Path not found!");
+      });
+  });
+  test.only("404: responds with a message 'User not found' when username is valid but does not exist", () => {
+    const commentToPost = {
+      username: "somedude27",
+      body: "Live long and prosper",
+    };
+    return request(app)
+      .post("/api/articles/4/comments")
+      .send(commentToPost)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("User not found");
+      });
+  });
+  test.skip("400: responds with a message 'Invalid path!' when passed an invalid path", () => {
+    const commentToPost = {
+      username: "butter_bridge",
+      body: "Live long and prosper",
+    };
+    return request(app)
+      .post("/api/articles/four/comments")
+      .send(commentToPost)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid path!");
       });
   });
 });
