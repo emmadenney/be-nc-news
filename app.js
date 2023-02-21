@@ -6,13 +6,20 @@ const {
   errorHandler404,
   errorHandlerPSQL400,
 } = require("./error-handling.js");
-const { getTopics, getArticles, getArticleById } = require("./controller");
+const {
+  getTopics,
+  getArticles,
+  getArticleById,
+  getComments,
+} = require("./controller");
 
 app.get("/api/topics", getTopics);
 
 app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticleById);
+
+app.get("/api/articles/:article_id/comments", getComments);
 
 app.use(errorHandlerPSQL400);
 app.use(errorHandler404);

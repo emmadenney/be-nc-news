@@ -1,5 +1,10 @@
 const db = require("./db/connection");
-const { selectTopics, selectArticles, selectArticleById } = require("./models");
+const {
+  selectTopics,
+  selectArticles,
+  selectArticleById,
+  selectCommentsByArticleId,
+} = require("./models");
 
 exports.getTopics = (request, response, next) => {
   selectTopics()
@@ -29,6 +34,24 @@ exports.getArticleById = (request, response, next) => {
         return Promise.reject({ status: 404, msg: "Path not found!" });
       }
       response.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getComments = (request, response, next) => {
+  const { article_id } = request.params;
+
+  const articleIdCheck = selectArticleById(article_id);
+  const selectComments = selectCommentsByArticleId(article_id);
+
+  Promise.all([articleIdCheck, selectComments])
+    .then(([article, comments]) => {
+      if (article.length === 0) {
+        return Promise.reject({ status: 404, msg: "Path not found!" });
+      }
+      response.status(200).send({ comments });
     })
     .catch((err) => {
       next(err);
