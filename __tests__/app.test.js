@@ -17,16 +17,7 @@ afterAll(() => {
   return db.end();
 });
 
-describe("universal errors", () => {
-  test("400: responds with a message 'Invalid path' when path is invalid", () => {
-    return request(app)
-      .get("/api/articles/not-a-valid-path-because-not-a-number")
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Invalid path!");
-      });
-  });
-});
+describe("universal errors", () => {});
 
 describe("/api/topics", () => {
   test("200 - GET: responds with an array of topic objects", () => {
@@ -102,6 +93,14 @@ describe("/api/articles/:article_id", () => {
         expect(body.msg).toBe("Path not found!");
       });
   });
+  test("400: responds with a message 'Invalid path' when path is invalid", () => {
+    return request(app)
+      .get("/api/articles/not-a-valid-path-because-not-a-number")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid path!");
+      });
+  });
 });
 
 describe("/api/articles/:article_id/comments", () => {
@@ -132,6 +131,14 @@ describe("/api/articles/:article_id/comments", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Path not found!");
+      });
+  });
+  test("400: responds with a message 'Invalid path' when path is invalid", () => {
+    return request(app)
+      .get("/api/articles/not-a-valid-path-because-not-a-number/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid path!");
       });
   });
   test("200: responds with an empty array if ID exists but has no comments", () => {
