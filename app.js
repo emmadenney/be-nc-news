@@ -11,6 +11,7 @@ const {
   getArticles,
   getArticleById,
   postComment,
+  getComments,
 } = require("./controller");
 
 app.get("/api/topics", getTopics);
@@ -18,6 +19,8 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticleById);
+
+app.get("/api/articles/:article_id/comments", getComments);
 
 app.post("/api/articles/:article_id/comments", postComment);
 

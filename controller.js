@@ -4,6 +4,7 @@ const {
   selectArticles,
   selectArticleById,
   insertComment,
+  selectCommentsByArticleId,
 } = require("./models");
 
 exports.getTopics = (request, response, next) => {
@@ -40,15 +41,29 @@ exports.getArticleById = (request, response, next) => {
     });
 };
 
-exports.postComment = (request, response, next) => {
+exports.getComments = (request, response, next) => {
   const { article_id } = request.params;
-  const commentToPost = request.body;
 
-  insertComment(article_id, commentToPost)
-    .then((newComment) => {
-      response.status(201).send({ comment: newComment });
+  const articleIdCheck = selectArticleById(article_id);
+  const selectComments = selectCommentsByArticleId(article_id);
+
+  Promise.all([articleIdCheck, selectComments])
+    .then(([article, comments]) => {
+      if (article.length === 0) {
+        return Promise.reject({ status: 404, msg: "Path not found!" });
+      }
+      response.status(200).send({ comments });
     })
     .catch((err) => {
       next(err);
     });
+};
+
+exports.postComment = (request, response, next) => {
+  const { article_id } = request.params;
+  const commentToPost = request.body;
+
+  insertComment(article_id, commentToPost).then((newComment) => {
+    response.status(201).send({ comment: newComment });
+  });
 };
