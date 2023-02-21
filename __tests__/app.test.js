@@ -100,3 +100,27 @@ describe("/api/articles/:article_id", () => {
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test.skip("201 - POST: responds with posted comment when request contains an object of username and body", () => {
+    const postObject = {
+      username: "somedude27",
+      body: "Live long and prosper",
+    };
+    return request(app)
+      .post("/api/articles/:article_id/comments")
+      .send(postObject)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toMatchObject({
+          comment_id: expect.any(Number),
+          body: postObject.body,
+          article_id: expect.any(Number),
+          author: expect.any(String),
+          votes: expect.any(Number),
+          created_at: expect.any(Number),
+        });
+      });
+  });
+});

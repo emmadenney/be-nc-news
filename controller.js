@@ -34,3 +34,5 @@ exports.getArticleById = (request, response, next) => {
       next(err);
     });
 };
+
+// exports.postComment;
