@@ -61,13 +61,42 @@ describe("/api/articles", () => {
 });
 
 describe("/api/articles/:article_id", () => {
-  test.skip("200 - GET: responds with the appropriate article object using article_id", () => {
+  test("200 - GET: responds with the appropriate article object using article_id", () => {
     return request(app)
       .get("/api/articles/2")
       .expect(200)
       .then(({ body }) => {
         const { article } = body;
-        expect(article.article_id).toBe(2);
+        expect(article).toBeInstanceOf(Array);
+        expect(article).toHaveLength(1);
+        expect(article).toMatchObject([
+          {
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: 2,
+            body: expect.any(String),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+          },
+        ]);
+      });
+  });
+  test("404: responds with a message 'Path not found' when path is valid but does not exist", () => {
+    return request(app)
+      .get("/api/articles/50")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Path not found!");
+      });
+  });
+  test("400: responds with a message 'Invalid path' when path is invalid", () => {
+    return request(app)
+      .get("/api/articles/not-a-valid-path-because-not-a-number")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid path!");
       });
   });
 });

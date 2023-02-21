@@ -1,13 +1,21 @@
 const db = require("./db/connection");
 const express = require("express");
 const app = express();
-const { errorHandler500 } = require("./error-handling.js");
-const { getTopics, getArticles } = require("./controller");
+const {
+  errorHandler500,
+  errorHandler404,
+  errorHandlerPSQL400,
+} = require("./error-handling.js");
+const { getTopics, getArticles, getArticleById } = require("./controller");
 
 app.get("/api/topics", getTopics);
 
 app.get("/api/articles", getArticles);
 
+app.get("/api/articles/:article_id", getArticleById);
+
+app.use(errorHandlerPSQL400);
+app.use(errorHandler404);
 app.use(errorHandler500);
 
 module.exports = app;
