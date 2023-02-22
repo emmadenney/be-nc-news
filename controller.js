@@ -4,6 +4,7 @@ const {
   selectArticles,
   selectArticleById,
   selectCommentsByArticleId,
+  selectVotesByArticleId,
 } = require("./models");
 
 exports.getTopics = (request, response, next) => {
@@ -52,6 +53,26 @@ exports.getComments = (request, response, next) => {
         return Promise.reject({ status: 404, msg: "Path not found!" });
       }
       response.status(200).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.updateVotes = (request, response, next) => {
+  const { article_id } = request.params;
+  const voteChange = request.body;
+
+  const articleIdCheck = selectArticleById(article_id);
+  const votesCheck = selectVotesByArticleId(article_id);
+
+  Promise.all([articleIdCheck, votesCheck])
+    .then(([article, votes]) => {
+      console.log(article, votes);
+      votes.total_votes += voteChange.inc_votes;
+      const updatedArticle = article[0];
+      updatedArticle.votes = votes.total_votes;
+      response.status(201).send({ updatedArticle });
     })
     .catch((err) => {
       next(err);

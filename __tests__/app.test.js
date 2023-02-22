@@ -151,3 +151,29 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe.only("PATCH /api/articles/:article_id", () => {
+  test("201 - PATCH: responds with updated article object (votes)", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({ inc_votes: 1 })
+      .expect(201)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toBeInstanceOf(Array);
+        expect(article).toHaveLength(1);
+        expect(article).toMatchObject([
+          {
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: 3,
+            body: expect.any(String),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: 1,
+            article_img_url: expect.any(String),
+          },
+        ]);
+      });
+  });
+});

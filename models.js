@@ -39,3 +39,14 @@ exports.selectCommentsByArticleId = (article_id) => {
       return result.rows;
     });
 };
+
+exports.selectVotesByArticleId = (article_id) => {
+  return db
+    .query(
+      `SELECT SUM(comments.votes) AS total_votes FROM comments WHERE article_id = $1`,
+      [article_id]
+    )
+    .then((result) => {
+      return result.rows;
+    });
+};
