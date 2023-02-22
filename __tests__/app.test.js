@@ -189,7 +189,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Path not found!");
       });
   });
-  test.only("404: responds with a message 'User not found' when username is valid but does not exist", () => {
+  test("404: responds with a message 'User not found' when username is valid but does not exist", () => {
     const commentToPost = {
       username: "somedude27",
       body: "Live long and prosper",
@@ -202,7 +202,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("User not found");
       });
   });
-  test.skip("400: responds with a message 'Invalid path!' when passed an invalid path", () => {
+  test("400: responds with a message 'Invalid path!' when passed an invalid path", () => {
     const commentToPost = {
       username: "butter_bridge",
       body: "Live long and prosper",

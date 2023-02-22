@@ -15,13 +15,7 @@ exports.errorHandler500 = (err, request, response, next) => {
 exports.errorHandler404 = (err, request, response, next) => {
   if (err.msg === "Path not found!") {
     response.status(404).send({ msg: "Path not found!" });
-  } else {
-    next(err);
-  }
-};
-
-exports.errorHandlerPSQL404 = (err, request, response, next) => {
-  if (err.code === "23503") {
+  } else if (err.code === "23503") {
     response.status(404).send({ msg: "User not found" });
   } else {
     next(err);
