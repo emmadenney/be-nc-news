@@ -168,7 +168,7 @@ describe("POST /api/articles/:article_id/comments", () => {
           {
             comment_id: expect.any(Number),
             body: "Live long and prosper",
-            article_id: expect.any(Number),
+            article_id: 3,
             author: "butter_bridge",
             votes: expect.any(Number),
             created_at: expect.any(String),
@@ -213,6 +213,16 @@ describe("POST /api/articles/:article_id/comments", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Invalid path!");
+      });
+  });
+  test("400: responds with a message 'Missing field' when no username or body sent with request", () => {
+    const commentToPost = {};
+    return request(app)
+      .post("/api/articles/4/comments")
+      .send(commentToPost)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Missing field!");
       });
   });
 });

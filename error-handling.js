@@ -1,7 +1,9 @@
 const db = require("./db/connection");
 
-exports.errorHandlerPSQL400 = (err, request, response, next) => {
-  if (err.code === "22P02") {
+exports.errorHandler400 = (err, request, response, next) => {
+  if (err.code === "23502") {
+    response.status(400).send({ msg: "Missing field!" });
+  } else if (err.code === "22P02") {
     response.status(400).send({ msg: "Invalid path!" });
   } else {
     next(err);
