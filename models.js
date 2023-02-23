@@ -6,23 +6,39 @@ exports.selectTopics = () => {
   });
 };
 
-exports.selectArticles = (topic) => {
-  const queryParams = [];
-  let queryString = [
-    `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id)::INT AS comment_count 
-  FROM articles 
-  LEFT JOIN comments 
-  ON articles.article_id = comments.article_id`,
-    ` GROUP BY articles.article_id
-  ORDER BY articles.created_at DESC`,
+exports.selectArticles = (topic, sort_by = "created_at", order = "DESC") => {
+  const allowedOptions = [
+    "author",
+    "title",
+    "article_id",
+    "topic",
+    "created_at",
+    "votes",
+    "article_img_url",
+    "comment_count",
+    "asc",
+    "desc",
+    "ASC",
+    "DESC",
   ];
 
+  const queryParams = [];
+
+  let queryString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id)::INT AS comment_count
+  FROM articles
+  LEFT JOIN comments
+  ON articles.article_id = comments.article_id`;
+
   if (topic !== undefined) {
-    queryString.splice(1, 0, ` WHERE articles.topic = $1`);
+    queryString += ` WHERE articles.topic = $1`;
     queryParams.push(topic);
   }
 
-  queryString = queryString.join("");
+  if (!allowedOptions.includes(sort_by) || !allowedOptions.includes(order)) {
+    return Promise.reject({ status: 404, msg: "Invalid input!" });
+  }
+
+  queryString += ` GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order};`;
 
   return db.query(queryString, queryParams).then((result) => {
     return result.rows;
