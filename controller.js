@@ -5,6 +5,7 @@ const {
   selectArticleById,
   insertComment,
   selectCommentsByArticleId,
+  selectUsers,
 } = require("./models");
 
 exports.getTopics = (request, response, next) => {
@@ -65,7 +66,16 @@ exports.postComment = (request, response, next) => {
       response.status(201).send({ comment: newComment });
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
+    });
+};
+
+exports.getUsers = (request, response, next) => {
+  selectUsers()
+    .then((users) => {
+      response.status(200).send({ users });
+    })
+    .catch((err) => {
       next(err);
     });
 };

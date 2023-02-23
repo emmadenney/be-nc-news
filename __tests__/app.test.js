@@ -96,7 +96,6 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/not-a-valid-path-because-not-a-number")
       .expect(400)
       .then(({ body }) => {
-        console.log(body);
         expect(body.msg).toBe("Bad request!");
       });
   });
@@ -184,7 +183,6 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(commentToPost)
       .expect(404)
       .then(({ body }) => {
-        console.log(body);
         expect(body.msg).toBe("Not found!");
       });
   });
@@ -222,6 +220,34 @@ describe("POST /api/articles/:article_id/comments", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Missing field!");
+      });
+  });
+});
+
+describe("GET /api/users", () => {
+  test("200 - GET: responds with an array of users with correct properties", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+        expect(users).toBeInstanceOf(Array);
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+  test("404: responds with 'not found' when passed an invalid path", () => {
+    return request(app)
+      .get("/api/14bananas")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found!");
       });
   });
 });

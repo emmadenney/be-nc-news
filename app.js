@@ -12,6 +12,7 @@ const {
   getArticleById,
   postComment,
   getComments,
+  getUsers,
 } = require("./controller");
 
 app.use(express.json());
@@ -25,6 +26,12 @@ app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getComments);
 
 app.post("/api/articles/:article_id/comments", postComment);
+
+app.get("/api/users", getUsers);
+
+app.all("/*", (request, response, next) => {
+  response.status(404).send({ msg: "Not found!" });
+});
 
 app.use(errorHandler400);
 app.use(errorHandler404);
