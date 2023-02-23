@@ -4,14 +4,17 @@ const app = express();
 const {
   errorHandler500,
   errorHandler404,
-  errorHandlerPSQL400,
+  errorHandler400,
 } = require("./error-handling.js");
 const {
   getTopics,
   getArticles,
   getArticleById,
+  postComment,
   getComments,
 } = require("./controller");
+
+app.use(express.json());
 
 app.get("/api/topics", getTopics);
 
@@ -21,7 +24,9 @@ app.get("/api/articles/:article_id", getArticleById);
 
 app.get("/api/articles/:article_id/comments", getComments);
 
-app.use(errorHandlerPSQL400);
+app.post("/api/articles/:article_id/comments", postComment);
+
+app.use(errorHandler400);
 app.use(errorHandler404);
 app.use(errorHandler500);
 

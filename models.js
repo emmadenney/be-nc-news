@@ -25,6 +25,9 @@ exports.selectArticleById = (article_id) => {
   return db
     .query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
     .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Not found!" });
+      }
       return result.rows;
     });
 };
@@ -37,5 +40,21 @@ exports.selectCommentsByArticleId = (article_id) => {
     )
     .then((result) => {
       return result.rows;
+    });
+};
+
+exports.insertComment = (article_id, commentToPost) => {
+  const { username, body } = commentToPost;
+
+  return db
+    .query(
+      `INSERT INTO comments
+      (body, article_id, author, votes)
+      VALUES
+      ($1, $2, $3, 0) RETURNING *;`,
+      [body, article_id, username]
+    )
+    .then((result) => {
+      return result.rows[0];
     });
 };
