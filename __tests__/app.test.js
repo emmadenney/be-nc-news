@@ -58,7 +58,7 @@ describe("GET /api/articles", () => {
         expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
-  test.only("200 - GET - TOPIC QUERY: accepts a topic query and responds with only articles of that topic", () => {
+  test.skip("200 - GET - TOPIC QUERY: accepts a topic query and responds with only articles of that topic", () => {
     return request(app)
       .get("/api/articles?topic=cats")
       .expect(200)
