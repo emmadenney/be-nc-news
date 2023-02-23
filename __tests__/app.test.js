@@ -83,21 +83,21 @@ describe("GET /api/articles/:article_id", () => {
         ]);
       });
   });
-  test("404: responds with a message 'Path not found' when path is valid but does not exist", () => {
+  test("404: responds with a message 'Path not found' when article id is valid but does not exist", () => {
     return request(app)
       .get("/api/articles/50")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Path not found!");
+        expect(body.msg).toBe("Not found!");
       });
   });
-  test("400: responds with a message 'Invalid path' when path is invalid", () => {
+  test("400: responds with a message 'Bad request' when path is invalid", () => {
     return request(app)
       .get("/api/articles/not-a-valid-path-because-not-a-number")
       .expect(400)
       .then(({ body }) => {
         console.log(body);
-        expect(body.msg).toBe("Invalid path!");
+        expect(body.msg).toBe("Bad request!");
       });
   });
 });
@@ -124,20 +124,20 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(comments).toBeSortedBy("created_at", { descending: true });
       });
   });
-  test("404: responds with a message 'Path not found' when path is valid but does not exist", () => {
+  test("404: responds with a message 'Not found' when article id is valid but does not exist", () => {
     return request(app)
       .get("/api/articles/49/comments")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Path not found!");
+        expect(body.msg).toBe("Not found!");
       });
   });
-  test("400: responds with a message 'Invalid path' when path is invalid", () => {
+  test("400: responds with a message 'Bad request' when path is invalid", () => {
     return request(app)
       .get("/api/articles/not-a-valid-path-because-not-a-number/comments")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid path!");
+        expect(body.msg).toBe("Bad request!");
       });
   });
   test("200: responds with an empty array if ID exists but has no comments", () => {
@@ -164,19 +164,17 @@ describe("POST /api/articles/:article_id/comments", () => {
       .expect(201)
       .then(({ body }) => {
         const { comment } = body;
-        expect(comment).toMatchObject([
-          {
-            comment_id: expect.any(Number),
-            body: "Live long and prosper",
-            article_id: 3,
-            author: "butter_bridge",
-            votes: expect.any(Number),
-            created_at: expect.any(String),
-          },
-        ]);
+        expect(comment).toMatchObject({
+          comment_id: expect.any(Number),
+          body: "Live long and prosper",
+          article_id: 3,
+          author: "butter_bridge",
+          votes: expect.any(Number),
+          created_at: expect.any(String),
+        });
       });
   });
-  test("404: responds with a message 'Path not found' when article_id path is valid but does not exist", () => {
+  test("404: responds with a message 'Not found' when article_id is valid but does not exist", () => {
     const commentToPost = {
       username: "butter_bridge",
       body: "Live long and prosper",
@@ -186,7 +184,8 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(commentToPost)
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Path not found!");
+        console.log(body);
+        expect(body.msg).toBe("Not found!");
       });
   });
   test("404: responds with a message 'User not found' when username is valid but does not exist", () => {
@@ -202,7 +201,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("User not found");
       });
   });
-  test("400: responds with a message 'Invalid path!' when passed an invalid path", () => {
+  test("400: responds with a message 'Bad request!' when passed an invalid path", () => {
     const commentToPost = {
       username: "butter_bridge",
       body: "Live long and prosper",
@@ -212,7 +211,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(commentToPost)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid path!");
+        expect(body.msg).toBe("Bad request!");
       });
   });
   test("400: responds with a message 'Missing field' when no username or body sent with request", () => {

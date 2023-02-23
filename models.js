@@ -26,7 +26,7 @@ exports.selectArticleById = (article_id) => {
     .query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
     .then((result) => {
       if (result.rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "Path not found!" });
+        return Promise.reject({ status: 404, msg: "Not found!" });
       }
       return result.rows;
     });
@@ -55,6 +55,6 @@ exports.insertComment = (article_id, commentToPost) => {
       [body, article_id, username]
     )
     .then((result) => {
-      return result.rows;
+      return result.rows[0];
     });
 };
