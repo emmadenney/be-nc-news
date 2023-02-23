@@ -10,16 +10,16 @@ exports.errorHandler400 = (err, request, response, next) => {
   }
 };
 
-exports.errorHandler500 = (err, request, response, next) => {
-  response.status(500).send({ msg: "Server error" });
-};
-
-exports.errorHandler404 = (err, request, response, next) => {
-  if (err.msg === "Not found!") {
-    response.status(404).send({ msg: "Not found!" });
+exports.customErrorHandler404 = (err, request, response, next) => {
+  if (err.status && err.msg) {
+    response.status(err.status).send({ msg: err.msg });
   } else if (err.code === "23503") {
-    response.status(404).send({ msg: "User not found" });
+    response.status(404).send({ msg: "Not found!" });
   } else {
     next(err);
   }
+};
+
+exports.errorHandler500 = (err, request, response, next) => {
+  response.status(500).send({ msg: "Server error" });
 };

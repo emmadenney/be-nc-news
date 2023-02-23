@@ -59,13 +59,14 @@ exports.insertComment = (article_id, commentToPost) => {
     });
 };
 
-exports.selectVotesByArticleId = (article_id) => {
+exports.updateArticleVotes = (article_id, voteChange) => {
   return db
     .query(
-      `SELECT SUM(comments.votes) AS total_votes FROM comments WHERE article_id = $1`,
-      [article_id]
+      `UPDATE articles
+  SET votes = votes + $1 WHERE article_id = $2 RETURNING *;`,
+      [voteChange, article_id]
     )
     .then((result) => {
-      return result.rows;
+      return result.rows[0];
     });
 };

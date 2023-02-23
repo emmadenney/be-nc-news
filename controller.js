@@ -5,7 +5,7 @@ const {
   selectArticleById,
   insertComment,
   selectCommentsByArticleId,
-  selectVotesByArticleId,
+  updateArticleVotes,
 } = require("./models");
 
 exports.getTopics = (request, response, next) => {
@@ -58,32 +58,24 @@ exports.postComment = (request, response, next) => {
   const { article_id } = request.params;
   const commentToPost = request.body;
 
-  const articleIdCheck = selectArticleById(article_id);
-  const insertedComment = insertComment(article_id, commentToPost);
-
-  Promise.all([articleIdCheck, insertedComment])
-    .then(([article, newComment]) => {
+  insertComment(article_id, commentToPost)
+    .then((newComment) => {
       response.status(201).send({ comment: newComment });
     })
     .catch((err) => {
-      console.log(err);
       next(err);
     });
 };
 
 exports.updateVotes = (request, response, next) => {
   const { article_id } = request.params;
-  const voteChange = request.body;
+  const voteChange = request.body.inc_votes;
 
   const articleIdCheck = selectArticleById(article_id);
-  const votesCheck = selectVotesByArticleId(article_id);
+  const updatedArticleVotes = updateArticleVotes(article_id, voteChange);
 
-  Promise.all([articleIdCheck, votesCheck])
-    .then(([article, votes]) => {
-      console.log(article, votes);
-      votes.total_votes += voteChange.inc_votes;
-      const updatedArticle = article[0];
-      updatedArticle.votes = votes.total_votes;
+  Promise.all([articleIdCheck, updatedArticleVotes])
+    .then(([article, updatedArticle]) => {
       response.status(201).send({ updatedArticle });
     })
     .catch((err) => {
