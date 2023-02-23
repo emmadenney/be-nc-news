@@ -12,6 +12,7 @@ const {
   getArticleById,
   postComment,
   getComments,
+  getUsers,
   updateVotes,
 } = require("./controller");
 
@@ -27,6 +28,12 @@ app.patch("/api/articles/:article_id", updateVotes);
 
 app.all("/*", (request, response, next) => {
   response.status(404).send({ msg: "Not found" });
+});
+
+app.get("/api/users", getUsers);
+
+app.all("/*", (request, response, next) => {
+  response.status(404).send({ msg: "Not found!" });
 });
 
 app.use(errorHandler400);

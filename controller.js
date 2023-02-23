@@ -5,6 +5,7 @@ const {
   selectArticleById,
   insertComment,
   selectCommentsByArticleId,
+  selectUsers,
   updateArticleVotes,
 } = require("./models");
 
@@ -77,6 +78,16 @@ exports.updateVotes = (request, response, next) => {
   Promise.all([articleIdCheck, updatedArticleVotes])
     .then(([article, updatedArticle]) => {
       response.status(200).send({ article: updatedArticle });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getUsers = (request, response, next) => {
+  selectUsers()
+    .then((users) => {
+      response.status(200).send({ users });
     })
     .catch((err) => {
       next(err);
