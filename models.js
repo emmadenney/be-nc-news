@@ -59,6 +59,11 @@ exports.insertComment = (article_id, commentToPost) => {
     });
 };
 
+exports.selectUsers = () => {
+  return db.query(`SELECT * FROM users;`).then((result) => {
+    return result.rows;
+  });
+
 exports.updateArticleVotes = (article_id, voteChange) => {
   return db
     .query(
