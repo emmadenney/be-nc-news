@@ -58,16 +58,16 @@ describe("GET /api/articles", () => {
         expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
-  test.skip("200 - GET - TOPIC QUERY: accepts a topic query and responds with only articles of that topic", () => {
+  test("200 - GET - TOPIC QUERY: accepts a topic query and responds with only articles of that topic", () => {
     return request(app)
       .get("/api/articles?topic=cats")
       .expect(200)
       .then(({ body }) => {
-        const { users } = body;
-        expect(users).toBeInstanceOf(Array);
-        expect(users).toHaveLength(1);
-        users.forEach((user) => {
-          expect(user).toMatchObject({
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toHaveLength(1);
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
             author: expect.any(String),
             title: expect.any(String),
             article_id: expect.any(Number),
@@ -246,35 +246,6 @@ describe("POST /api/articles/:article_id/comments", () => {
   });
 });
 
-describe("GET /api/users", () => {
-  test("200 - GET: responds with an array of users with correct properties", () => {
-    return request(app)
-      .get("/api/users")
-      .expect(200)
-      .then(({ body }) => {
-        const { users } = body;
-        expect(users).toBeInstanceOf(Array);
-        expect(users).toHaveLength(4);
-        users.forEach((user) => {
-          expect(user).toMatchObject({
-            username: expect.any(String),
-            name: expect.any(String),
-            avatar_url: expect.any(String),
-          });
-        });
-      });
-  });
-  test("404: responds with 'not found' when passed an invalid path", () => {
-    return request(app)
-      .get("/api/14bananas")
-       .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Not found!");
-      });
-      
-      
-  });
-
 describe("PATCH /api/articles/:article_id", () => {
   test("200 - PATCH: responds with updated article object (votes)", () => {
     return request(app)
@@ -321,4 +292,33 @@ describe("PATCH /api/articles/:article_id", () => {
       .then(({ body }) => {
         expect(body.msg).toBe("Missing field!");
       });
+  });
+});
+
+describe("GET /api/users", () => {
+  test("200 - GET: responds with an array of users with correct properties", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+        expect(users).toBeInstanceOf(Array);
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+  test("404: responds with 'not found' when passed an invalid path", () => {
+    return request(app)
+      .get("/api/14bananas")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found!");
+      });
+  });
 });

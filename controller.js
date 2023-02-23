@@ -20,7 +20,9 @@ exports.getTopics = (request, response, next) => {
 };
 
 exports.getArticles = (request, response, next) => {
-  selectArticles()
+  const { topic } = request.query;
+
+  selectArticles(topic)
     .then((articles) => {
       response.status(200).send({ articles });
     })

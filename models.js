@@ -6,19 +6,27 @@ exports.selectTopics = () => {
   });
 };
 
-exports.selectArticles = () => {
-  return db
-    .query(
-      `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id)::INT AS comment_count 
-      FROM articles 
-      LEFT JOIN comments 
-      ON articles.article_id = comments.article_id
-      GROUP BY articles.article_id
-      ORDER BY articles.created_at DESC;`
-    )
-    .then((result) => {
-      return result.rows;
-    });
+exports.selectArticles = (topic) => {
+  const queryParams = [];
+  let queryString = [
+    `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id)::INT AS comment_count 
+  FROM articles 
+  LEFT JOIN comments 
+  ON articles.article_id = comments.article_id`,
+    ` GROUP BY articles.article_id
+  ORDER BY articles.created_at DESC`,
+  ];
+
+  if (topic !== undefined) {
+    queryString.splice(1, 0, ` WHERE articles.topic = $1`);
+    queryParams.push(topic);
+  }
+
+  queryString = queryString.join("");
+
+  return db.query(queryString, queryParams).then((result) => {
+    return result.rows;
+  });
 };
 
 exports.selectArticleById = (article_id) => {
@@ -59,11 +67,6 @@ exports.insertComment = (article_id, commentToPost) => {
     });
 };
 
-exports.selectUsers = () => {
-  return db.query(`SELECT * FROM users;`).then((result) => {
-    return result.rows;
-  });
-
 exports.updateArticleVotes = (article_id, voteChange) => {
   return db
     .query(
@@ -74,4 +77,10 @@ exports.updateArticleVotes = (article_id, voteChange) => {
     .then((result) => {
       return result.rows[0];
     });
+};
+
+exports.selectUsers = () => {
+  return db.query(`SELECT * FROM users;`).then((result) => {
+    return result.rows;
+  });
 };
