@@ -76,7 +76,7 @@ exports.updateVotes = (request, response, next) => {
 
   Promise.all([articleIdCheck, updatedArticleVotes])
     .then(([article, updatedArticle]) => {
-      response.status(201).send({ updatedArticle });
+      response.status(200).send({ article: updatedArticle });
     })
     .catch((err) => {
       next(err);

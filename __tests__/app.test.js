@@ -225,14 +225,14 @@ describe("POST /api/articles/:article_id/comments", () => {
 });
 
 describe("PATCH /api/articles/:article_id", () => {
-  test("201 - PATCH: responds with updated article object (votes)", () => {
+  test("200 - PATCH: responds with updated article object (votes)", () => {
     return request(app)
       .patch("/api/articles/3")
       .send({ inc_votes: -100 })
-      .expect(201)
+      .expect(200)
       .then(({ body }) => {
-        const { updatedArticle } = body;
-        expect(updatedArticle).toMatchObject({
+        const { article } = body;
+        expect(article).toMatchObject({
           author: expect.any(String),
           title: expect.any(String),
           article_id: 3,
