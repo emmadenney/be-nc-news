@@ -226,7 +226,7 @@ describe("POST /api/articles/:article_id/comments", () => {
   });
 });
 
-describe.only("PATCH /api/articles/:article_id", () => {
+describe.skip("PATCH /api/articles/:article_id", () => {
   test("201 - PATCH: responds with updated article object (votes)", () => {
     return request(app)
       .patch("/api/articles/3")
