@@ -6,6 +6,7 @@ const {
   insertComment,
   selectCommentsByArticleId,
   selectUsers,
+  updateArticleVotes,
 } = require("./models");
 
 exports.getTopics = (request, response, next) => {
@@ -58,12 +59,25 @@ exports.postComment = (request, response, next) => {
   const { article_id } = request.params;
   const commentToPost = request.body;
 
-  const articleIdCheck = selectArticleById(article_id);
-  const insertedComment = insertComment(article_id, commentToPost);
-
-  Promise.all([articleIdCheck, insertedComment])
-    .then(([article, newComment]) => {
+  insertComment(article_id, commentToPost)
+    .then((newComment) => {
       response.status(201).send({ comment: newComment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.updateVotes = (request, response, next) => {
+  const { article_id } = request.params;
+  const voteChange = request.body.inc_votes;
+
+  const articleIdCheck = selectArticleById(article_id);
+  const updatedArticleVotes = updateArticleVotes(article_id, voteChange);
+
+  Promise.all([articleIdCheck, updatedArticleVotes])
+    .then(([article, updatedArticle]) => {
+      response.status(200).send({ article: updatedArticle });
     })
     .catch((err) => {
       next(err);

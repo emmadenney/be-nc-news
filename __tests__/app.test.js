@@ -83,7 +83,7 @@ describe("GET /api/articles/:article_id", () => {
         ]);
       });
   });
-  test("404: responds with a message 'Path not found' when article id is valid but does not exist", () => {
+  test("404: responds with a message 'Not found' when article id is valid but does not exist", () => {
     return request(app)
       .get("/api/articles/50")
       .expect(404)
@@ -186,7 +186,7 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Not found!");
       });
   });
-  test("404: responds with a message 'User not found' when username is valid but does not exist", () => {
+  test("404: responds with a message 'Not found' when username is valid but does not exist", () => {
     const commentToPost = {
       username: "somedude27",
       body: "Live long and prosper",
@@ -196,7 +196,7 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(commentToPost)
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("User not found");
+        expect(body.msg).toBe("Not found!");
       });
   });
   test("400: responds with a message 'Bad request!' when passed an invalid path", () => {
@@ -245,9 +245,58 @@ describe("GET /api/users", () => {
   test("404: responds with 'not found' when passed an invalid path", () => {
     return request(app)
       .get("/api/14bananas")
+       .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found!");
+      });
+      
+      
+  });
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("200 - PATCH: responds with updated article object (votes)", () => {
+    return request(app)
+      .patch("/api/articles/3")
+      .send({ inc_votes: -100 })
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: 3,
+          body: expect.any(String),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: -100,
+          article_img_url: expect.any(String),
+        });
+      });
+  });
+  test("400: responds with a 'bad request' message when path is invalid", () => {
+    return request(app)
+      .patch("/api/articles/:article_id")
+      .send({ inc_votes: 1 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request!");
+      });
+  });
+  test("404: responds with 'Not found!' when passed a valid id that doesn't exist", () => {
+    return request(app)
+      .patch("/api/articles/78")
+      .send({ inc_votes: -50 })
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Not found!");
       });
   });
+  test("400: responds with 'Missing field!' when passed an empty object or missing values", () => {
+    return request(app)
+      .patch("/api/articles/2")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Missing field!");
+      });
 });
