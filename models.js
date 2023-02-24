@@ -1,19 +1,59 @@
 const db = require("./db/connection");
 
-exports.selectTopics = () => {
-  return db.query(`SELECT * FROM topics;`).then((result) => {
+exports.selectTopics = (topic) => {
+  let queryString = `SELECT * FROM topics`;
+  const queryParams = [];
+
+  if (topic !== undefined) {
+    queryString += ` WHERE slug = $1;`;
+    queryParams.push(topic);
+  }
+
+  return db.query(queryString, queryParams).then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "Not found!" });
+    }
     return result.rows;
   });
 };
 
-exports.selectArticles = () => {
-  return db
-    .query(
-      `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;`
-    )
-    .then((result) => {
-      return result.rows;
-    });
+exports.selectArticles = (topic, sort_by = "created_at", order = "DESC") => {
+  const allowedOptions = [
+    "author",
+    "title",
+    "article_id",
+    "topic",
+    "created_at",
+    "votes",
+    "article_img_url",
+    "comment_count",
+    "asc",
+    "desc",
+    "ASC",
+    "DESC",
+  ];
+
+  const queryParams = [];
+
+  let queryString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.article_id)::INT AS comment_count
+  FROM articles
+  LEFT JOIN comments
+  ON articles.article_id = comments.article_id`;
+
+  if (topic !== undefined) {
+    queryString += ` WHERE articles.topic = $1`;
+    queryParams.push(topic);
+  }
+
+  if (!allowedOptions.includes(sort_by) || !allowedOptions.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Invalid input!" });
+  }
+
+  queryString += ` GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order};`;
+
+  return db.query(queryString, queryParams).then((result) => {
+    return result.rows;
+  });
 };
 
 exports.selectArticleById = (article_id) => {
@@ -73,4 +113,10 @@ exports.updateArticleVotes = (article_id, voteChange) => {
     .then((result) => {
       return result.rows[0];
     });
+};
+
+exports.selectUsers = () => {
+  return db.query(`SELECT * FROM users;`).then((result) => {
+    return result.rows;
+  });
 };

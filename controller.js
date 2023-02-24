@@ -20,8 +20,13 @@ exports.getTopics = (request, response, next) => {
 };
 
 exports.getArticles = (request, response, next) => {
-  selectArticles()
-    .then((articles) => {
+  const { topic, sort_by, order } = request.query;
+
+  const topicCheck = selectTopics(topic);
+  const selectedArticles = selectArticles(topic, sort_by, order);
+
+  Promise.all([topicCheck, selectedArticles])
+    .then(([topic, articles]) => {
       response.status(200).send({ articles });
     })
     .catch((err) => {

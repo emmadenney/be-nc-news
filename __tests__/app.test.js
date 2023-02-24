@@ -58,6 +58,131 @@ describe("GET /api/articles", () => {
         expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
+  test("200 - GET - TOPIC QUERY: accepts a topic query and responds with only articles of that topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toHaveLength(1);
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: "cats",
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+      });
+  });
+  test("200 - GET - SORT_BY QUERY: accepts a sort by query and responds with all articles sorted by any valid column specified", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toHaveLength(12);
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+        expect(articles).toBeSortedBy("title", { descending: true });
+      });
+  });
+  test("200 - GET - SORT_BY ORDER QUERY: accepts a sort by query and order query and responds with all articles sorted by any valid column and order specified", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toHaveLength(12);
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+        expect(articles).toBeSortedBy("author");
+      });
+  });
+  test("200 - GET - TOPIC SORT_BY ORDER QUERY: accepts topic, sort by and order queries and responds with all articles of that topic sorted by any valid column and order specified", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=author&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toHaveLength(11);
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            author: expect.any(String),
+            title: expect.any(String),
+            article_id: expect.any(Number),
+            topic: "mitch",
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+        expect(articles).toBeSortedBy("author");
+      });
+  });
+  test("404 - GET - TOPIC QUERY: responds with 'Not found!' if topic doesn't exist", () => {
+    return request(app)
+      .get("/api/articles?topic=dogs")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found!");
+      });
+  });
+  test("200 - GET - TOPIC QUERY: responds with an empty array if topic exists but has no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toHaveLength(0);
+      });
+  });
+  test("400: responds with 'invalid input' if sort_by value is not a valid option", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=article_length")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input!");
+      });
+  });
+  test("400: responds with 'invalid input' if order value is not a valid option", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=title&order=bad")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input!");
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id", () => {
@@ -221,34 +346,6 @@ describe("POST /api/articles/:article_id/comments", () => {
   });
 });
 
-describe("GET /api/users", () => {
-  test("200 - GET: responds with an array of users with correct properties", () => {
-    return request(app)
-      .get("/api/users")
-      .expect(200)
-      .then(({ body }) => {
-        const { users } = body;
-        expect(users).toBeInstanceOf(Array);
-        expect(users).toHaveLength(4);
-        users.forEach((user) => {
-          expect(user).toMatchObject({
-            username: expect.any(String),
-            name: expect.any(String),
-            avatar_url: expect.any(String),
-          });
-        });
-      });
-  });
-  test("404: responds with 'not found' when passed an invalid path", () => {
-    return request(app)
-      .get("/api/14bananas")
-      .expect(404)
-      .then(({ body }) => {
-        expect(body.msg).toBe("Not found!");
-      });
-  });
-});
-
 describe("PATCH /api/articles/:article_id", () => {
   test("200 - PATCH: responds with updated article object (votes)", () => {
     return request(app)
@@ -294,6 +391,34 @@ describe("PATCH /api/articles/:article_id", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Missing field!");
+      });
+  });
+});
+
+describe("GET /api/users", () => {
+  test("200 - GET: responds with an array of users with correct properties", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+        expect(users).toBeInstanceOf(Array);
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(user).toMatchObject({
+            username: expect.any(String),
+            name: expect.any(String),
+            avatar_url: expect.any(String),
+          });
+        });
+      });
+  });
+  test("404: responds with 'not found' when passed an invalid path", () => {
+    return request(app)
+      .get("/api/14bananas")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found!");
       });
   });
 });
