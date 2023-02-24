@@ -61,26 +61,23 @@ describe("GET /api/articles", () => {
 });
 
 describe("GET /api/articles/:article_id", () => {
-  test("200 - GET: responds with the appropriate article object using article_id", () => {
+  test("200 - GET: responds with the appropriate article object using article_id, including a new key of comment_count", () => {
     return request(app)
-      .get("/api/articles/2")
+      .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
         const { article } = body;
-        expect(article).toBeInstanceOf(Array);
-        expect(article).toHaveLength(1);
-        expect(article).toMatchObject([
-          {
-            author: expect.any(String),
-            title: expect.any(String),
-            article_id: 2,
-            body: expect.any(String),
-            topic: expect.any(String),
-            created_at: expect.any(String),
-            votes: expect.any(Number),
-            article_img_url: expect.any(String),
-          },
-        ]);
+        expect(article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: 1,
+          body: expect.any(String),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: 11,
+        });
       });
   });
   test("404: responds with a message 'Not found' when article id is valid but does not exist", () => {
@@ -245,13 +242,12 @@ describe("GET /api/users", () => {
   test("404: responds with 'not found' when passed an invalid path", () => {
     return request(app)
       .get("/api/14bananas")
-       .expect(404)
+      .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Not found!");
       });
-      
-      
   });
+});
 
 describe("PATCH /api/articles/:article_id", () => {
   test("200 - PATCH: responds with updated article object (votes)", () => {
@@ -299,4 +295,5 @@ describe("PATCH /api/articles/:article_id", () => {
       .then(({ body }) => {
         expect(body.msg).toBe("Missing field!");
       });
+  });
 });
