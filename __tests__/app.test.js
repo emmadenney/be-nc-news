@@ -438,3 +438,30 @@ describe("GET /api/users", () => {
       });
   });
 });
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204 - DELETE: responds with no content after successfulling deleting appropriate comment", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+  test("404 - DELETE: responds with 'Not found' when passed a comment id that does not exist", () => {
+    return request(app)
+      .delete("/api/comments/100")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found!");
+      });
+  });
+  test("400 - DELETE: responds with 'bad request' when path is invalid", () => {
+    return request(app)
+      .delete("/api/comments/bananas")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request!");
+      });
+  });
+});

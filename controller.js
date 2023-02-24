@@ -7,6 +7,7 @@ const {
   selectCommentsByArticleId,
   selectUsers,
   updateArticleVotes,
+  deleteCommentById,
 } = require("./models");
 
 exports.getTopics = (request, response, next) => {
@@ -93,6 +94,18 @@ exports.getUsers = (request, response, next) => {
   selectUsers()
     .then((users) => {
       response.status(200).send({ users });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteComment = (request, response, next) => {
+  const { comment_id } = request.params;
+
+  deleteCommentById(comment_id)
+    .then(() => {
+      response.status(204).send();
     })
     .catch((err) => {
       next(err);
