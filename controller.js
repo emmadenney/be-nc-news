@@ -9,6 +9,7 @@ const {
   updateArticleVotes,
   deleteCommentById,
 } = require("./models");
+const fs = require("fs/promises");
 
 exports.getTopics = (request, response, next) => {
   selectTopics()
@@ -106,6 +107,17 @@ exports.deleteComment = (request, response, next) => {
   deleteCommentById(comment_id)
     .then(() => {
       response.status(204).send();
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getEndpoints = (request, response, next) => {
+  fs.readFile(`./endpoints.json`)
+    .then((data) => {
+      const endpoints = JSON.parse(data);
+      response.status(200).send({ endpoints });
     })
     .catch((err) => {
       next(err);

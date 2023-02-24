@@ -465,3 +465,16 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("GET /api", () => {
+  test("200 - GET: responds with a json object containing all available endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        const { endpoints } = body;
+        expect(typeof endpoints).toBe("object");
+        expect(Object.keys(endpoints).length).toBe(9);
+      });
+  });
+});
