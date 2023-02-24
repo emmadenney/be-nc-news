@@ -2,9 +2,9 @@ const db = require("./db/connection");
 const express = require("express");
 const app = express();
 const {
-  errorHandler500,
-  customErrorHandler404,
-  errorHandler400,
+  errorHandler404s,
+  errorHandler400s,
+  errorHandler500s,
 } = require("./error-handling.js");
 const {
   getTopics,
@@ -31,8 +31,8 @@ app.all("/*", (request, response, next) => {
   response.status(404).send({ msg: "Not found!" });
 });
 
-app.use(errorHandler400);
-app.use(customErrorHandler404);
-app.use(errorHandler500);
+app.use(errorHandler400s);
+app.use(errorHandler404s);
+app.use(errorHandler500s);
 
 module.exports = app;

@@ -35,12 +35,15 @@ exports.selectArticles = (topic, sort_by = "created_at", order = "DESC") => {
   }
 
   if (!allowedOptions.includes(sort_by) || !allowedOptions.includes(order)) {
-    return Promise.reject({ status: 404, msg: "Invalid input!" });
+    return Promise.reject({ status: 400, msg: "Invalid input!" });
   }
 
   queryString += ` GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order};`;
 
   return db.query(queryString, queryParams).then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "Not found!" });
+    }
     return result.rows;
   });
 };

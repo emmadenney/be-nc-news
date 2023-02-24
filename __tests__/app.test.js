@@ -80,7 +80,7 @@ describe("GET /api/articles", () => {
         });
       });
   });
-  test("200 - GET - SORT BY QUERY: accepts a sort by query and responds with all articles sorted by any valid column specified", () => {
+  test("200 - GET - SORT_BY QUERY: accepts a sort by query and responds with all articles sorted by any valid column specified", () => {
     return request(app)
       .get("/api/articles?sort_by=title")
       .expect(200)
@@ -103,7 +103,7 @@ describe("GET /api/articles", () => {
         expect(articles).toBeSortedBy("title", { descending: true });
       });
   });
-  test("200 - GET - SORT BY + ORDER QUERY: accepts a sort by query and order and responds with all articles sorted by any valid column and order specified", () => {
+  test("200 - GET - SORT_BY ORDER QUERY: accepts a sort by query and order query and responds with all articles sorted by any valid column and order specified", () => {
     return request(app)
       .get("/api/articles?sort_by=author&order=asc")
       .expect(200)
@@ -126,7 +126,7 @@ describe("GET /api/articles", () => {
         expect(articles).toBeSortedBy("author");
       });
   });
-  test("200 - GET - TOPIC + SORT BY + ORDER QUERY: accepts a topic and sort by query and order and responds with all articles sorted by any valid column and order specified", () => {
+  test("200 - GET - TOPIC SORT_BY ORDER QUERY: accepts topic, sort by and order queries and responds with all articles of that topic sorted by any valid column and order specified", () => {
     return request(app)
       .get("/api/articles?topic=mitch&sort_by=author&order=asc")
       .expect(200)
@@ -149,7 +149,38 @@ describe("GET /api/articles", () => {
         expect(articles).toBeSortedBy("author");
       });
   });
-  // then check for error handling cases
+  test("404 - GET - TOPIC QUERY: responds with 'Not found!' if topic doesn't exist", () => {
+    return request(app)
+      .get("/api/articles?topic=dogs")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found!");
+      });
+  });
+  test("404 - GET - TOPIC QUERY: responds with 'Not found!' if topic exists but has no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found!");
+      });
+  });
+  test("400: responds with 'invalid input' if sort_by value is not a valid option", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=article_length")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input!");
+      });
+  });
+  test("400: responds with 'invalid input' if order value is not a valid option", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=title&order=bad")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input!");
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id", () => {
