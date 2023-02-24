@@ -186,6 +186,22 @@ describe("GET /api/articles", () => {
 });
 
 describe("GET /api/articles/:article_id", () => {
+  test("200 - GET: responds with the appropriate article object using article_id", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toHaveProperty("author");
+        expect(article).toHaveProperty("title");
+        expect(article.article_id).toBe(1);
+        expect(article).toHaveProperty("body");
+        expect(article).toHaveProperty("topic");
+        expect(article).toHaveProperty("created_at");
+        expect(article).toHaveProperty("votes");
+        expect(article).toHaveProperty("article_img_url");
+      });
+  });
   test("200 - GET: responds with the appropriate article object using article_id, including a new key of comment_count", () => {
     return request(app)
       .get("/api/articles/1")
