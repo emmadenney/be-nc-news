@@ -22,8 +22,11 @@ exports.getTopics = (request, response, next) => {
 exports.getArticles = (request, response, next) => {
   const { topic, sort_by, order } = request.query;
 
-  selectArticles(topic, sort_by, order)
-    .then((articles) => {
+  const topicCheck = selectTopics(topic);
+  const selectedArticles = selectArticles(topic, sort_by, order);
+
+  Promise.all([topicCheck, selectedArticles])
+    .then(([topic, articles]) => {
       response.status(200).send({ articles });
     })
     .catch((err) => {

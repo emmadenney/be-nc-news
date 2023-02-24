@@ -157,12 +157,14 @@ describe("GET /api/articles", () => {
         expect(body.msg).toBe("Not found!");
       });
   });
-  test("404 - GET - TOPIC QUERY: responds with 'Not found!' if topic exists but has no articles", () => {
+  test("200 - GET - TOPIC QUERY: responds with an empty array if topic exists but has no articles", () => {
     return request(app)
       .get("/api/articles?topic=paper")
-      .expect(404)
+      .expect(200)
       .then(({ body }) => {
-        expect(body.msg).toBe("Not found!");
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toHaveLength(0);
       });
   });
   test("400: responds with 'invalid input' if sort_by value is not a valid option", () => {
