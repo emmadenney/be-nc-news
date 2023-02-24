@@ -188,24 +188,37 @@ describe("GET /api/articles", () => {
 describe("GET /api/articles/:article_id", () => {
   test("200 - GET: responds with the appropriate article object using article_id", () => {
     return request(app)
-      .get("/api/articles/2")
+      .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
         const { article } = body;
-        expect(article).toBeInstanceOf(Array);
-        expect(article).toHaveLength(1);
-        expect(article).toMatchObject([
-          {
-            author: expect.any(String),
-            title: expect.any(String),
-            article_id: 2,
-            body: expect.any(String),
-            topic: expect.any(String),
-            created_at: expect.any(String),
-            votes: expect.any(Number),
-            article_img_url: expect.any(String),
-          },
-        ]);
+        expect(article).toHaveProperty("author");
+        expect(article).toHaveProperty("title");
+        expect(article.article_id).toBe(1);
+        expect(article).toHaveProperty("body");
+        expect(article).toHaveProperty("topic");
+        expect(article).toHaveProperty("created_at");
+        expect(article).toHaveProperty("votes");
+        expect(article).toHaveProperty("article_img_url");
+      });
+  });
+  test("200 - GET: responds with the appropriate article object using article_id, including a new key of comment_count", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: 1,
+          body: expect.any(String),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+          comment_count: 11,
+        });
       });
   });
   test("404: responds with a message 'Not found' when article id is valid but does not exist", () => {
