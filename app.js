@@ -1,6 +1,7 @@
 const db = require("./db/connection");
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const {
   errorHandler404s,
   errorHandler400s,
@@ -18,6 +19,7 @@ const {
   getEndpoints,
 } = require("./controller");
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/api", getEndpoints);
