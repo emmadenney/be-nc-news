@@ -21,12 +21,8 @@ exports.selectArticles = (topic, sort_by = "created_at", order = "DESC") => {
   const allowedOptions = [
     "author",
     "title",
-    "article_id",
-    "topic",
     "created_at",
     "votes",
-    "article_img_url",
-    "comment_count",
     "asc",
     "desc",
     "ASC",
