@@ -99,6 +99,14 @@ exports.selectUsers = () => {
   });
 };
 
+exports.selectUserByUsername = (username) => {
+  return db
+    .query(`SELECT * FROM users WHERE username = $1`, [username])
+    .then((result) => {
+      return result.rows[0];
+    });
+};
+
 exports.updateArticleVotes = (article_id, voteChange) => {
   return db
     .query(
@@ -109,12 +117,6 @@ exports.updateArticleVotes = (article_id, voteChange) => {
     .then((result) => {
       return result.rows[0];
     });
-};
-
-exports.selectUsers = () => {
-  return db.query(`SELECT * FROM users;`).then((result) => {
-    return result.rows;
-  });
 };
 
 exports.deleteCommentById = (comment_id) => {

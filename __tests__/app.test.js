@@ -439,6 +439,23 @@ describe("GET /api/users", () => {
   });
 });
 
+describe.only("GET /api/users/:username", () => {
+  test("200 - GET: responds with a user object with correct properties", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        const { user } = body;
+        expect(user).toMatchObject({
+          username: "butter_bridge",
+          name: "jonny",
+          avatar_url:
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+        });
+      });
+  });
+});
+
 describe("DELETE /api/comments/:comment_id", () => {
   test("204 - DELETE: responds with no content after successfulling deleting appropriate comment", () => {
     return request(app)
